@@ -109,7 +109,7 @@
             border-radius: 5px;
             position: relative;
             z-index: 2;
-            filter: grayscale(100%) contrast(1.1); /* Hacker Style Grayscale */
+            filter: grayscale(75%) contrast(1.1); /* Hacker Style Grayscale */
             transition: 0.5s ease;
         }
         
@@ -117,25 +117,7 @@
             filter: none; /* Color on hover */
         }
 
-        /* Neon Frame Effect Behind Image */
-        .about-img-container::after {
-            content: '';
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            width: 100%;
-            height: 100%;
-            border: 2px solid var(--accent);
-            border-radius: 5px;
-            z-index: 1;
-            transition: 0.3s;
-        }
-        
-        .about-img-container:hover::after {
-            top: 10px;
-            left: 10px;
-        }
-
+   
         /* --- Skills --- */
         .skills-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
         .skill-item { background: var(--card-bg); padding: 20px; border-radius: 8px; transition: 0.3s; }
@@ -463,4 +445,5 @@
         })();
     </script>
 </body>
+
 </html>
