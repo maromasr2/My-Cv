@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MARWAN SWEDAN | FORENSICS LAB</title>
     
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔍</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💠</text></svg>">
     
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Orbitron:wght@500;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -21,7 +21,7 @@
             --bg-dark: #050510;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             background-color: var(--bg-dark);
@@ -33,12 +33,19 @@
 
         /* --- 1. THE GATE (REAL LAB BACKGROUND) --- */
         #gate-screen {
-            position: fixed; top: 0; left: 0; width: 110%; height: 110%;
-            background: url('image_3ed681.png') no-repeat center center/cover;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url('image_3ed681.png') no-repeat center center;
+            background-size: cover; /* Cover ensures it fills screen on mobile too */
             z-index: 10000;
             display: flex; flex-direction: column; 
             justify-content: center; align-items: center;
             transition: 1s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+
+        #gate-screen::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 5, 20, 0.3);
+            z-index: 0;
         }
 
         /* Active Scanning Line */
@@ -50,25 +57,14 @@
             z-index: 1;
             opacity: 0.5;
         }
-
-        @keyframes scanScreen {
-            0% { top: 0%; opacity: 0; }
-            50% { opacity: 1; }
-            100% { top: 100%; opacity: 0; }
-        }
-
-        #gate-screen::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 5, 20, 0.3); /* Low opacity for visibility */
-            z-index: 0;
-        }
+        @keyframes scanScreen { 0% { top: 0%; opacity: 0; } 50% { opacity: 1; } 100% { top: 100%; opacity: 0; } }
 
         .gate-content {
             position: relative; z-index: 2;
             display: flex; flex-direction: column; align-items: center;
+            width: 100%;
         }
 
-        /* INTENSE ANIMATED SCANNER */
         .fingerprint-scanner {
             width: 130px; height: 130px;
             border: 2px solid var(--neon-blue);
@@ -85,36 +81,22 @@
         }
 
         @keyframes scannerPulse {
-            0% { box-shadow: 0 0 20px var(--neon-blue), inset 0 0 10px var(--neon-blue); transform: scale(1); }
-            100% { box-shadow: 0 0 60px var(--neon-blue), inset 0 0 30px var(--neon-blue); transform: scale(1.05); }
+            0% { box-shadow: 0 0 20px var(--neon-blue); transform: scale(1); }
+            100% { box-shadow: 0 0 50px var(--neon-blue); transform: scale(1.05); }
         }
-
-        /* Rotating Rings around scanner */
-        .fingerprint-scanner::before {
-            content: ''; position: absolute; width: 110%; height: 110%;
-            border-radius: 50%; border: 1px dashed var(--neon-blue);
-            animation: rotateRing 10s linear infinite;
-        }
-        .fingerprint-scanner::after {
-            content: ''; position: absolute; width: 130%; height: 130%;
-            border-radius: 50%; border: 1px dotted var(--neon-purple);
-            animation: rotateRingReverse 7s linear infinite;
-        }
-
-        @keyframes rotateRing { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        @keyframes rotateRingReverse { from { transform: rotate(360deg); } to { transform: rotate(0deg); } }
 
         .gate-text {
-            margin-top: 40px; font-family: 'Orbitron'; font-size: 1.5rem;
+            margin-top: 30px; font-family: 'Orbitron'; font-size: 1.5rem;
             color: #fff; letter-spacing: 4px; text-shadow: 0 0 10px var(--neon-blue);
             background: rgba(0,0,0,0.7); padding: 8px 20px; 
             border: 1px solid var(--neon-blue);
             border-radius: 5px;
-            animation: blinkText 1s infinite alternate;
+            text-align: center;
         }
-        @keyframes blinkText { from {opacity: 0.7;} to {opacity: 1; text-shadow: 0 0 20px var(--neon-blue);} }
 
-        /* --- 2. INTERNAL BACKGROUND --- */
+        /* --- 2. MAIN INTERFACE --- */
+        #lab-interface { display: none; opacity: 0; transition: 1s; padding-bottom: 50px; }
+
         .cyber-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #000 100%);
@@ -128,148 +110,128 @@
                 linear-gradient(90deg, var(--glass-border) 1px, transparent 1px);
             background-size: 50px 50px;
             transform: perspective(500px) rotateX(60deg);
-            animation: moveGrid 3s linear infinite; /* Faster grid */
-            z-index: -2;
-            opacity: 0.4;
-            box-shadow: 0 0 100px var(--neon-blue);
+            animation: moveGrid 5s linear infinite;
+            z-index: -2; opacity: 0.4;
         }
-
         @keyframes moveGrid { 0% { background-position: 0 0; } 100% { background-position: 0 50px; } }
 
-        .orb {
-            position: absolute; border-radius: 50%;
-            filter: blur(40px); opacity: 0.3;
-            animation: floatOrb 5s infinite alternate ease-in-out; /* Faster orbs */
-        }
-        .orb-1 { top: 10%; left: 20%; width: 300px; height: 300px; background: var(--neon-purple); }
-        .orb-2 { bottom: 10%; right: 10%; width: 400px; height: 400px; background: var(--neon-blue); }
-        @keyframes floatOrb { from { transform: translate(0,0); } to { transform: translate(30px, 30px); } }
-
-        /* --- 3. MAIN INTERFACE --- */
-        #lab-interface { display: none; opacity: 0; transition: 1s; padding-bottom: 50px; }
-
-        header { text-align: center; padding: 60px 0 40px; position: relative; }
+        header { text-align: center; padding: 60px 20px 40px; }
 
         .hologram-title {
-            font-family: 'Orbitron'; font-size: 4rem; font-weight: 900;
-            background: linear-gradient(to right, #fff, var(--neon-blue), #fff);
-            background-size: 200% auto;
+            font-family: 'Orbitron'; font-size: 3.5rem; font-weight: 900;
+            background: linear-gradient(to right, #fff, var(--neon-blue));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 20px var(--neon-blue));
-            animation: pulseText 3s infinite alternate, shineTitle 3s linear infinite;
+            filter: drop-shadow(0 0 15px var(--neon-blue));
+            line-height: 1.2;
         }
-        @keyframes shineTitle { to {background-position: 200% center;} }
-        @keyframes pulseText { from {filter: drop-shadow(0 0 10px var(--neon-blue));} to {filter: drop-shadow(0 0 30px var(--neon-blue)); transform: scale(1.02);} }
 
         .lab-status {
-            display: inline-block; padding: 8px 20px; border-radius: 20px;
+            display: inline-block; padding: 8px 15px; border-radius: 20px;
             background: rgba(0, 243, 255, 0.1); border: 1px solid var(--neon-blue);
             color: var(--neon-blue); font-weight: bold; margin-top: 15px;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
-            animation: statusPulse 2s infinite;
+            font-size: 0.9rem;
         }
-        @keyframes statusPulse { 0% {opacity: 0.8;} 50% {opacity: 1; box-shadow: 0 0 25px var(--neon-blue);} 100% {opacity: 0.8;} }
 
         .container { max-width: 1400px; margin: 0 auto; padding: 0 20px; }
 
         .section-label {
-            font-family: 'Orbitron'; font-size: 2rem; color: #fff; margin: 60px 0 30px;
+            font-family: 'Orbitron'; font-size: 2rem; color: #fff; margin: 50px 0 30px;
             display: flex; align-items: center; text-shadow: 0 0 10px var(--neon-purple);
         }
-        .section-label i { margin-right: 15px; color: var(--neon-purple); animation: spinIcon 10s infinite linear; }
-        @keyframes spinIcon { 0% {transform: rotateY(0deg);} 100% {transform: rotateY(360deg);} }
+        .section-label i { margin-right: 15px; color: var(--neon-purple); }
 
-        .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
-
-        /* --- ANIMATED CARDS (LEVITATION) --- */
-        @keyframes levitate {
-            0% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-            100% { transform: translateY(0); }
+        .cards-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+            gap: 30px; 
         }
 
         .glass-card {
             background: rgba(255, 255, 255, 0.03);
             backdrop-filter: blur(15px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            overflow: hidden;
-            transition: 0.3s;
-            position: relative;
+            border-radius: 15px; overflow: hidden;
+            transition: 0.4s; position: relative;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            cursor: pointer;
-            height: 320px;
-            animation: levitate 5s ease-in-out infinite; /* Continuous floating */
+            cursor: pointer; height: 320px;
+            animation: levitate 4s ease-in-out infinite;
         }
-        /* Stagger animations so they don't move together */
-        .glass-card:nth-child(odd) { animation-delay: 0s; }
-        .glass-card:nth-child(even) { animation-delay: 2.5s; }
+        @keyframes levitate { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-10px);} }
 
-        .glass-card:hover {
-            animation-play-state: paused; /* Stop floating on hover */
-            transform: translateY(-5px) scale(1.05);
-            border-color: var(--neon-blue);
-            box-shadow: 0 0 50px rgba(0, 243, 255, 0.4);
-            background: rgba(0, 243, 255, 0.08);
-            z-index: 10;
-        }
+        .glass-card:nth-child(even) { animation-delay: 2s; }
+
+        .glass-card:active { transform: scale(0.98); } /* Touch feedback */
 
         .card-visual {
             height: 200px; width: 100%;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             position: relative; overflow: hidden;
         }
-        
         .card-visual iframe, .card-visual img {
             width: 100%; height: 100%; object-fit: cover; border: none;
-            opacity: 0.8; transition: 0.5s; pointer-events: none;
+            opacity: 0.8; pointer-events: none;
         }
-        .glass-card:hover .card-visual iframe,
-        .glass-card:hover .card-visual img { opacity: 1; transform: scale(1.1); filter: brightness(1.2); }
 
-        .card-body { padding: 20px; position: relative; }
-        /* Add a scanning line on the card body */
-        .card-body::after {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
-            background: var(--neon-blue);
-            opacity: 0; transition: 0.3s;
-        }
-        .glass-card:hover .card-body::after { opacity: 1; animation: scanCard 1.5s linear infinite; }
-        @keyframes scanCard { 0% {top:0;} 100% {top:100%;} }
-
+        .card-body { padding: 20px; }
         .card-title { font-family: 'Orbitron'; font-size: 1rem; color: #fff; margin-bottom: 5px; }
         .card-info { color: var(--neon-blue); font-size: 0.85rem; font-weight: 600; }
 
-        /* --- Footer --- */
         .lab-footer {
-            margin-top: 80px; text-align: center; padding: 30px;
+            margin-top: 60px; text-align: center; padding: 30px;
             border-top: 1px solid var(--glass-border);
             background: linear-gradient(0deg, rgba(0,243,255,0.1) 0%, transparent 100%);
         }
         .social-btn {
-            font-size: 2rem; color: #fff; margin: 0 20px; transition: 0.3s; display: inline-block;
+            font-size: 2rem; color: #fff; margin: 0 15px; transition: 0.3s; display: inline-block;
         }
-        .social-btn:hover { color: var(--neon-purple); text-shadow: 0 0 30px var(--neon-purple); transform: scale(1.3) rotate(10deg); }
 
         /* --- Modal --- */
         .modal {
             display: none; position: fixed; top:0; left:0; width:100%; height:100%;
-            background: rgba(0,0,0,0.9); backdrop-filter: blur(15px);
+            background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
             z-index: 20000; align-items: center; justify-content: center;
         }
         .modal-box {
             width: 85%; height: 90%; background: #000;
             border: 2px solid var(--neon-blue);
-            box-shadow: 0 0 100px var(--neon-blue);
+            box-shadow: 0 0 50px var(--neon-blue);
             position: relative;
-            animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         .close-btn {
-            position: absolute; top: -45px; right: 0; color: #fff; font-size: 40px; cursor: pointer; transition: 0.3s;
+            position: absolute; top: -50px; right: 0; color: #fff; 
+            font-size: 40px; cursor: pointer; padding: 10px;
         }
-        .close-btn:hover { color: var(--neon-red); transform: rotate(180deg) scale(1.2); }
-        @keyframes zoomIn { from {transform:scale(0.5); opacity:0;} to {transform:scale(1); opacity:1;} }
 
+        /* --- MOBILE RESPONSIVE FIXES (The Important Part) --- */
+        @media (max-width: 768px) {
+            /* 1. Adjust Gate */
+            .gate-text { font-size: 1.1rem; letter-spacing: 2px; width: 90%; }
+            .fingerprint-scanner { width: 100px; height: 100px; font-size: 3rem; }
+
+            /* 2. Adjust Header */
+            .hologram-title { font-size: 2.2rem; } 
+            .lab-status { font-size: 0.7rem; padding: 5px 10px; }
+
+            /* 3. Adjust Grid to Single Column */
+            .cards-grid { 
+                grid-template-columns: 1fr; /* Stack cards vertically */
+                gap: 25px; 
+            }
+            .glass-card { height: auto; min-height: 300px; } /* Auto height */
+
+            /* 4. Adjust Section Titles */
+            .section-label { 
+                font-size: 1.5rem; 
+                margin: 40px 0 20px;
+                flex-direction: column; /* Stack icon and text */
+                align-items: flex-start;
+            }
+            .section-label i { margin-bottom: 10px; }
+
+            /* 5. Modal Adjustments */
+            .modal-box { width: 95%; height: 80%; }
+            .close-btn { top: -45px; right: 10px; font-size: 35px; }
+        }
     </style>
 </head>
 <body>
@@ -279,19 +241,17 @@
             <div class="fingerprint-scanner" onclick="unlockLab()">
                 <i class="fas fa-fingerprint"></i>
             </div>
-            <div class="gate-text">SECURE ACCESS REQ.</div>
+            <div class="gate-text">TOUCH TO ACCESS</div>
         </div>
     </div>
 
     <div id="lab-interface">
         <div class="cyber-bg"></div>
         <div class="grid-floor"></div>
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-
+        
         <header data-aos="fade-down">
             <div class="hologram-title">MARWAN SWEDAN</div>
-            <div class="lab-status">● SYSTEM ACTIVE // DIGITAL FORENSICS ENGINEER</div>
+            <div class="lab-status">● SYSTEM ACTIVE // DIGITAL FORENSICS</div>
         </header>
 
         <div class="container">
@@ -458,7 +418,7 @@
             <h3 style="color:#fff; font-family:'Orbitron'; margin-bottom: 20px;">ESTABLISH SECURE LINK</h3>
             <a href="https://linkedin.com/in/marwan-swedan" target="_blank" class="social-btn"><i class="fab fa-linkedin"></i></a>
             <a href="https://wa.me/201515227612" target="_blank" class="social-btn"><i class="fab fa-whatsapp"></i></a>
-            <p style="margin-top: 20px; font-size:0.8rem; color:#aaa;">© 2026 ENG. MARWAN SWEDAN | SECURE VAULT</p>
+            <p style="margin-top: 20px; font-size:0.8rem; color:#aaa;">© 2026 ENG. MARWAN SWEDAN</p>
         </div>
 
     </div>
@@ -475,10 +435,12 @@
     <script>
         AOS.init({ duration: 800 });
         
-        // Tilt Effect
-        VanillaTilt.init(document.querySelectorAll(".glass-card"), {
-            max: 15, speed: 400, glare: true, "max-glare": 0.4
-        });
+        // Tilt Effect (Only on desktop to save battery on mobile)
+        if (window.innerWidth > 768) {
+            VanillaTilt.init(document.querySelectorAll(".glass-card"), {
+                max: 15, speed: 400, glare: true, "max-glare": 0.4
+            });
+        }
 
         // Unlock Animation
         function unlockLab() {
@@ -526,5 +488,4 @@
         }
     </script>
 </body>
-
 </html>
